@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+	<!-- <link rel="stylesheet" type="text/css" href="css/index.css"/> -->
+	<script type="text/javascript" src="js/zepto.min.js"></script>
+	<script type="text/javascript" src="./js/txplayer.js"></script>
+</head>
+<body>
+<div id="playPage">
+	<div class="content">
+		<div id="main_tv" style="height: 100vh;width: 100vw"></div>
+	</div>
+</div>
+<script>
+    var obj = {
+        ttUrl: 'http://www.baidu.com', // 退弹跳转地址
+        endUrl: 'http://www.baidu.com', // 结束跳转地址
+        ddUrl: 'http://www.baidu.com', // 断点跳转地址
+        break_point_length: '14', // 断点时长
+        vid: 'p3102y8mb0f',//视频vid
+        cover_img: 'http://xcx-liuliang.oss-cn-shanghai.aliyuncs.com/video-xcx-two/01B39AAA-1FD6-AB06-2F36-CC6973367E58.jpeg', // 视频封面
+        vHeigth: '100vh', // 视频高度百分比
+    }
+
+    gogg(obj.ttUrl)
+    function getVideo() {
+        var dp = new Txplayer({
+            containerId: 'main_tv',
+            vid: obj.vid,
+            width: '100%',
+            height: '100%',
+            autoplay: false,
+            // poster:obj.cover_img,
+        });
+        console.log(dp)
+        var temp = 'a';
+        var isplay = getUrlParam('isplay');
+        console.log(isplay)
+        dp.on('timeupdate', (parmas) => {
+            if (temp == 'a' && isplay == 1) { // 此方法用于让视频跳转到指定位置播放
+                                // 虽然player提供了seekTo方法用于跳转到指定位置
+                                // 但是在4G环境下此方法无效，只能采用下列方法解决
+                // dp.seekTo(obj.break_point_length);
+				console.log(111)
+                setTimeout( () => { // 部分机型在4G下不加定时器，也无法跳转
+                    parmas.videoTag.currentTime = obj.break_point_length
+                }, 500)
+                temp = 'b'
+            }
+            if ( parmas.videoTag.currentTime >= obj.break_point_length && isplay != 1 ) { // 用于在播放到指定时间调用下列事件
+                dp.pause();
+                location.href = './tl/fenxiang.html'
+            }
+            if (dp.getCurrentTime() == dp.getDuration()) { // 用于播放结束触发时间
+                location.href = obj.ddUrl;
+            }
+        });
+      
+    }
+
+    getVideo()
+
+	function getUrlParam(name) { // 获取地址栏参数
+        var reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`) // 构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg) // 匹配目标参数
+        if (r != null) return unescape(r[2])
+        return null // 返回参数值
+    }
+
+    function gogg(url) {
+        history.pushState(history.length + 1, 'message', window.location.href.split('#')[0] + '#' + new Date().getTime())
+        if (navigator.userAgent.indexOf('Android') != -1) { //判断浏览器类型，处理兼容问题
+            if (typeof (tbsJs) != 'undefined') { //判断tbsJs是否存在
+                tbsJs.onReady('{useCachedApi : "true"}', function (e) {
+                })
+                window.onhashchange = function () { //hash改变时被触发
+                    location.href = url
+                }
+            } else {
+                var pop = 0
+                window.onhashchange = function (event) {
+                    pop++
+                    if (pop >= 3) {
+                        location.href = url
+                    } else {
+                        history.go(1)
+                    }
+                }
+                history.go(-1)
+            }
+        } else {
+            window.onhashchange = function () {
+                location.href = url
+            }
+        }
+    }
+</script>
+</body>
+</html>

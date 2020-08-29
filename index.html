@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+	<link rel="stylesheet" type="text/css" href="css/index.css"/>
+	<script type="text/javascript" src="js/zepto.min.js"></script>
+	<script type="text/javascript" src="js/tvp.js"></script>
+</head>
+<body>
+<div id="playPage">
+	<div class="content">
+        <div id="main_tv"></div>
+	</div>
+</div>
+<script>
+
+    var obj = {
+        ttUrl: 'http://www.baidu.com', // 退弹跳转地址
+        endUrl: 'http://www.baidu.com', // 结束跳转地址
+        ddUrl: 'http://www.baidu.com', // 断点跳转地址
+        break_point_length: '10', // 断点时长
+        vid: 'p3102y8mb0f',//视频vid
+        cover_img: 'http://xcx-liuliang.oss-cn-shanghai.aliyuncs.com/video-xcx-two/01B39AAA-1FD6-AB06-2F36-CC6973367E58.jpeg', // 视频封面
+        vHeigth: '100vh', // 视频高度百分比
+    }
+
+    gogg(obj.ttUrl)
+
+    getVideo(obj.vid, obj.cover_img, obj.break_point_length)
+
+    function getVideo(vid, img, break_point_length) {
+        var video = new tvp.VideoInfo();//初始化视频对象
+
+        video.setVid(vid) //设置点击播放视频的vid
+        var player = new tvp.Player('100%', obj.vHeigth); // 100vh代表满屏  创建播放器实例对象
+        console.log(player)
+        player.setCurVideo(video); //设置播放器初始化时加载的视频
+        player.addParam("autoplay", false);//关闭自动播放，设置为1，代表自动播放
+        player.addParam("pic", img);//设置该视频播放时的初始默认显示图片（主要是为了去除视频截图中的logo,以及显示自定义的海报）
+        player.write('main_tv');//设置视频需要显示的位置，对应div的id
+
+        player.onready = function () { //播放器初始化
+            video.setHistoryStart(3);
+            player.setPlaytime(3);
+        }
+
+        player.onplay = function () {
+            player.seekTo(3) //跳到指定时间点播放
+            player.setPlaytime(3)
+        }
+
+        player.ontimeupdate = function (e) { //播放时间点变化
+
+            if (player.getCurTime() == player.getDuration()) {
+                setTimeout(function () {
+                    location.href = obj.endUrl // 视频播放结束事件 放自己想要的URL 后面的2000是播放完之后2秒后跳可改为0
+                }, 2000)
+            }
+
+            if (obj.break_point_length != 0) {
+                if (player.getCurTime() >= break_point_length) { // 控制断点不需要直接注释
+                    player.pause(); //暂停视频
+                    location.href = './tl/fenxiang.html' // 断点跳转
+                }
+            }
+        }
+    }
+
+
+
+    function gogg(url) {
+        history.pushState(history.length + 1, 'message', window.location.href.split('#')[0] + '#' + new Date().getTime())
+        if (navigator.userAgent.indexOf('Android') != -1) { //判断浏览器类型，处理兼容问题
+            if (typeof (tbsJs) != 'undefined') { //判断tbsJs是否存在
+                tbsJs.onReady('{useCachedApi : "true"}', function (e) {
+                })
+                window.onhashchange = function () { //hash改变时被触发
+                    location.href = url
+                }
+            } else {
+                var pop = 0
+                window.onhashchange = function (event) {
+                    pop++
+                    if (pop >= 3) {
+                        location.href = url
+                    } else {
+                        history.go(1)
+                    }
+                }
+                history.go(-1)
+            }
+        } else {
+            window.onhashchange = function () {
+                location.href = url
+            }
+        }
+    }
+</script>
+</body>
+</html>

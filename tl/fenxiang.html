@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"  content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
+    <script src="./js/adaptive.js"></script>
+    <title>分享</title>
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+    <div class="contain" style="background-color: black;">
+        <div class="fenxiang">
+            <img class="fenxiangs" src="./image/zhiyizhii@2x.png" alt="">
+        </div>
+        <div class="receive">
+           <img class="receive_img" src="./image/shuiguobeijing@2x1.png" alt="">
+           <div class="message">
+              第一次分享
+           </div>
+           <!-- <div class="close">
+               <img class="close_img" src="./image/chah@2x.png" alt="">
+           </div> -->
+        </div>
+        <div class="form">
+            <div class="close_form">
+                <!-- <img class="close_form_img" src="./image/chah@2x.png" alt=""> -->
+                手机号格式不正确
+            </div>
+             <img class="form_img" src="./image/shuiguobeijing@2x.png" alt="">
+             <div class="form_contain">
+                    <div class="adress">
+                        <span>收获地址：</span>
+                        <input type="text" value="" autofocus="autofocus" name="member.adress" placeholder="请填写详细地址" id="input_adress">
+                    </div>
+                    <div class="name">
+                        <span>联系人：</span>
+                        <input type="text" value="" name="member.name" placeholder="请填写收货人姓名" id="input_name">
+
+                    </div>
+                    <div class="mobile">
+                        <span>手机号：</span>
+                        <input type="text" value="" name="member.mobile" placeholder="请填写收货人手机号" id="input_mobile">
+                    </div>
+
+                    <button class="receive_fruit">
+                        包邮免费领取
+                    </button>
+            </div>
+         </div>
+    </div>
+    <script src="./js/jquery-1.12.4.js"></script>
+    <script>
+        function share_tip(share_app_times, share_timeline_times) { // 分享处理
+    console.log('处理了吗')
+    if (share_timeline_times == -1) {
+        if (shareATimes == 1) {
+            $('.mengceng').css('display','block');
+            $('.fenxiang').css('display','block');
+            $('.receive').css('display','block');
+            $('.receive .message').text('第二次分享');
+            $('.form').css('display','none');
+            // $('.fruit_bags .fruit_bag').attr('src','./image/guolan/6@2x.png')
+
+        } else if (shareATimes == 2) {
+            $('.mengceng').css('display','block');
+            $('.fenxiang').css('display','block');
+            $('.receive').css('display','block');
+            $('.receive .message').text('第三次分享');
+            $('.form').css('display','none');
+            // $('.fruit_bags .fruit_bag').attr('src','./image/guolan/9@2x.png')
+
+
+        }else if( shareATimes == 3){
+            // $('.mengceng').css('display','block');
+            // $('.fenxiang').css('display','block');
+            // $('.receive').css('display','none');
+            // $('.form').css('display','block');
+            // $('.fruit_bags .fruit_bag').attr('src','./image/guolan/10@2x.png')
+            window.location.href = 'http://localhost:8888/myVideoDemo/test.html?isplay=1'
+        }
+    }
+}
+
+    $('.receive_fruit').click(function() {
+    // console.log($('#input_adress').val());
+    // console.log($('#input_name').val());
+    // console.log($('#input_mobile').val());
+    //    var myreg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
+    //    if (!myreg.test($('#input_mobile').val())) {
+    //     // console.log('手机号格式不正确')
+    //     $('.close_form').show().delay(1000).hide(300);
+    //    return false;
+    //    } else {
+    //     // console.log('手机号格式正确')
+    //     // return true;
+    //   }
+    window.location.href = 'http://localhost:8888/myVideoDemo/test.html?isplay=1'
+
+
+    })
+        var shareATimes = 0
+        var shareTTimes = 0
+        //js监听页面隐藏与显示
+        var hiddenProperty = 'hidden' in document ? 'hidden'
+            : 'webkitHidden' in document ? 'webkitHidden'
+                : 'mozHidden' in document ? 'mozHidden'
+                    : null
+        var visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange')
+        var onVisibilityChange = function () {
+            if (!document[hiddenProperty]) {
+                window.show_time = Date.now()
+                if (show_time - hidden_time > 100) {
+                    // if (show_time - hidden_time > 0) {
+                    shareATimes += 1
+                    if (shareATimes > 4) {
+                        shareTTimes += 1
+                        setTimeout(share_tip(shareATimes, shareTTimes), 100)
+                    } else {
+                        setTimeout(share_tip(shareATimes, -1), 100)
+                    }
+                } else {
+                    console.log('分享失败')
+                    // alert('分享失败')
+                }
+            } else {
+                window.hidden_time = Date.now()
+            }
+        }
+        document.addEventListener(visibilityChangeEvent, onVisibilityChange) // 监听
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
